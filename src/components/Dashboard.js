@@ -1,64 +1,119 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import * as fs from "fs";
-import * as AWS from "aws-sdk";
+import axios from '../axios'
+import Jimp from 'jimp';
+import TargetList from './TargetList';
 
 const Dashboard = () => {
 
     const [image, setImage] = useState(null);
-    const [targetList, setTargetList] = useState();
-    const [uploading, setUploading] = useState(false);
+    const [videoFile, setVideoFile] = useState(null);
+    const [imageUploading, setImageUploading] = useState(false);
+    const [videoUploading, setVideoUploading] = useState(false);
+    const [targets, setTargets] = useState([]);
 
-
-    // Base64 CONVERTER
+    // Base64 CONVERTER and IMAGE PROCESSING
     const getBase64 = (file) => {
         let reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => setImage(reader.result);
+        reader.onload = async () => {
+            const newImage = await Jimp.read(reader.result)
+            newImage.greyscale()
+            newImage.getBase64Async(Jimp.MIME_JPEG)
+                .then(res => {
+                    setImage(res)
+                })
+        }
         reader.onerror = error => { console.log(error) };
     }
 
     // ON IMAGE CHANGE FUNCTION TO CREATE BUFFER
     const onImageChange = async (e) => {
         if (e.target.files && e.target.files[0]) {
-            // await setImage(URL.createObjectURL(e.target.files[0]))
             getBase64(e.target.files[0])
         }
     }
 
+    // ON VIDEO CHANGE FUNCTION TO CREATE BUFFER
+    const onVideoChange = async (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0]
+            setVideoFile(file)
+            console.log(file)
+        }
+    }
+
+    // VIDEO UPLOAD FUNCTION
+    const postVideo = async (videoFile, fileName) => {
+        const formData = new FormData();
+        formData.append("video", videoFile)
+
+        const result = await axios.post(`/addVideo/:${fileName}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        return result.data
+    }
+
 
     // SUBMIT HANDLER TO ADD IMAGE
-    const submitHandler = (e) => {
-        e.preventDefault()
-        setUploading(true)
-        const imgObj = { name: `Image${targetList.results.length}`, imagePath: image }
-        axios.post('http://localhost:5000/api/targets/addtarget', imgObj)
-            .then(res => {
-                console.log(res.data)
-                alert('Uploaded Successfully')
-                setUploading(false)
-            })
-            .catch(err => {
-                console.log(err)
-                alert('Uploading Failed')
-                setUploading(false)
+    const submitHandler = async (e) => {
+        if (image && videoFile) {
+            const fileName = `Image${targets.length}`
+            e.preventDefault()
+            setImageUploading(true)
+            const imgObj = { name: fileName, imagePath: image }
+            axios.post('/addtarget', imgObj)
+                .then(async res => {
+                    console.log(res.data)
+                    alert('Image Uploaded Successfully')
+                    if (res.data.result_code === "TargetCreated") {
+                        setImageUploading(false)
+                        setVideoUploading(true)
+                        const result = await postVideo(videoFile, fileName)
+                        console.log(result)
+                        setVideoUploading(false)
+                    } else {
+                        alert('Target name already exists')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    alert('Image Uploading Failed')
+                    setImageUploading(false)
+                })
+        } else {
+            alert('Something is missing in the form, select both files')
+        }
+    }
+
+
+    // FUNCTION FOR GETTING OBJECTS OF ALL TARGETS
+    // const getAllTargetDetails = () => {
+    //     let targetsAray = []
+    //     axios.get('/')
+    //         .then(response => {
+    //             response.data.results.map(res => axios.get(`/${res}`)
+    //                 .then(r => {
+    //                     targetsAray.push(r)
+    //                     setTargetList(targetsAray)
+    //                     console.log(r)
+    //                 })
+    //             )
+    //         })
+    // }
+
+    // Get all target IDS
+
+
+    const getTargets = () => {
+        axios.get('/')
+            .then(response => {
+                setTargets(response.data.results)
+                // console.log(response.data.results)
             })
     }
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/targets')
-            .then(res => {
-                console.log(res.data)
-                setTargetList(res.data)
-            })
-
-        // console.log(image)
-    }, [image])
-
-    // RENDER THE LIST OF ALL TARGETS FUNCTION
-    const renderTargets = () => {
-        return targetList.results.map(res => <p key={res}>{res}</p>)
-    }
+        getTargets()
+        // getAllTargetDetails()
+    }, [])
 
     return (
         <div className="pt-3" style={{ backgroundColor: 'yellow' }}>
@@ -72,17 +127,21 @@ const Dashboard = () => {
                                     <div className="card-body p-5 text-center">
                                         <div className="form-outline mb-4">
                                             <h5>Choose an Image to Upload:</h5>
-                                            <input type="file" id="typeEmailX-2" className="form-control form-control-lg"
+                                            <input type="file" id="typeEmailX-2" className="form-control form-control-lg mb-3"
                                                 onChange={onImageChange} />
-                                        </div>
-                                        <div className="mb-3">
-                                            {image ? <img src={image} width={200} alt='football' /> : null}
-                                        </div>
-                                        {uploading ? <button className="btn btn-primary btn-lg btn-block" type="submit"><div className="spinner-border" role="status">
-                                            <span className="sr-only">Loading...</span>
-                                        </div></button> :
-                                            <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={submitHandler}>Send</button>}
 
+                                            <div className="mb-3">
+                                                {image ? <img src={image} width={200} alt='football' /> : null}
+                                            </div>
+
+                                            <h5>Choose a video to Upload:</h5>
+                                            <input type="file" id="typeEmailX-2" className="form-control form-control-lg"
+                                                onChange={onVideoChange} />
+                                        </div>
+
+                                        {imageUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Image...</button> :
+                                            videoUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Video...</button> :
+                                                <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={submitHandler}>Send</button>}
                                     </div>
                                 </div>
                             </div>
@@ -91,10 +150,7 @@ const Dashboard = () => {
                         <div className="pb-5">
                             <h4 className="display-4 text-center mt-2">List of all targets</h4>
                             <div className="mt-3 bg-light p-2 border border-dark">
-                                {targetList ? renderTargets() :
-                                    <div className="spinner-border text-success d-flex justify-content" role="status">
-                                        <span className="sr-only text-center">Loading...</span>
-                                    </div>}
+                                {targets.length !== 0 ? <TargetList targets={targets} /> : null}
                             </div>
                         </div>
                     </div>

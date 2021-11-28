@@ -3,7 +3,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 
 // IMPORTING ROUTES HERE
-const targetRoutes = require('./targetRoutes')
+const targetRoutes = require('./routes/targetRoutes')
 
 const app = express();
 // app.use(express.json());

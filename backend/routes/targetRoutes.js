@@ -1,21 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const vuforia = require('vuforia-api')
-// const sharp = require('sharp')
-const Jimp = require('jimp');
+const fs = require('fs')
+const util = require('util')
+const unlinkFile = util.promisify(fs.unlink)
 
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
+const { uploadFile, getFileStream } = require('../S3')
 
-// IMAGE PROCESSING
-// async function resizeImage(imagePath) {
-//     try {
-//         await sharp(imagePath)
-//             .greyscale()
-//             .toFile("sampleeee");
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
 
 
 // VUFORIAL CLIENT SETUP
@@ -27,7 +21,7 @@ const Jimp = require('jimp');
 //     'clientSecretKey': '92984ef75652e52f6e7ec4ffa45426c9914017d0'
 // })
 
-// test
+// test keys
 var client = vuforia.client({
     'serverAccessKey': '72c7cee0b5006f897bf5957d98bb791b7fb4506d',
     'serverSecretKey': '59344b0d061a6b1ce7fadf249c3506107f3c350e',
@@ -37,45 +31,45 @@ var client = vuforia.client({
 })
 
 // util for base64 encoding and decoding
-var util = vuforia.util();
+var vuforia_util = vuforia.util();
 
 
 // Add new Target
 router.post('/addtarget', async (req, res) => {
     const { name, imagePath } = req.body
-    // var pathArray = imagePath.slice(23)
-    // var pathBuffer = await sharp(pathArray).greyscale().toBuffer()
-    // Jimp.read(imagePath, (err, img) => {
-    //     if(err) throw err;
-    //     img.greyscale().write('eazyyyy'); 
-    // })
-    // res.send(imagePath)
+    const imgPath = imagePath.slice(23)
 
-    const newImage = await Jimp.read(imagePath)
-    newImage.greyscale()
-    newImage.write('rara.jpg')       
+    var target = {
+        'name': name,
+        'width': 250,
+        'image': imgPath,
+        'active_flag': true,
+        'application_metadata': vuforia_util.encodeBase64('metadataaaa')
+    };
 
-        // console.log(newImage)
+    client.addTarget(target, function (error, result) {
 
-    // var target = {
-    //     'name': name,
-    //     'width': 32.0,
-    //     // 'image': pathArray,
-    //     'image': util.encodeFileBase64('./newImage.jpg'),
-    //     'active_flag': true,
-    //     'application_metadata': util.encodeBase64('metadataaaa')
-    // };
-
-    // client.addTarget(target, function (error, result) {
-
-    //     if (error) {
-    //         console.error(result);
-    //     } else {
-    //         console.log(result);
-    //         res.send(result)
-    //     }
-    // });
+        if (error) {
+            console.error(result);
+        } else {
+            console.log(result);
+            res.send(result)
+        }
+    });
 })
+
+// Add video to S3
+router.post('/addVideo/:filename',upload.single('video'), async (req, res) => {
+    const file = req.file
+    console.log(file)
+
+    const result = await uploadFile(file, req.params.filename)
+    await unlinkFile(file.path)
+    console.log(result)
+    // res.send({videoPath: `/videos/${result.Key}`})
+    res.send(result)
+})
+
 
 // Get all targets 
 router.get('/', async (req, res) => {
@@ -86,9 +80,6 @@ router.get('/', async (req, res) => {
         } else {
             // console.log(result);
             res.send(result)
-
-
-
         }
     });
 })
