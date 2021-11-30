@@ -1,11 +1,18 @@
-require('dotenv').config()
+// require('dotenv').config()
 const fs = require('fs')
 const S3 = require('aws-sdk/clients/s3')
 
-const bucketName = 'faisal-test'
-const region = 'ap-south-1'
-const accessKeyId = 'AKIA5BHIMUUY67D3OXE5'
-const secretAccessKey = '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'
+const bucketName = 'cherry-pix-bucket'
+const region = 'eu-west-2'
+const accessKeyId = 'AKIA5ZCBRGJV3TS2KVN6 '
+const secretAccessKey = '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'
+
+
+// Test
+// const bucketName = 'faisal-test'
+// const region = 'ap-south-1'
+// const accessKeyId = 'AKIA5BHIMUUY67D3OXE5'
+// const secretAccessKey = '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'
 
 const s3 = new S3({
   region,

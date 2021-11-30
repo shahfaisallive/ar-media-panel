@@ -1,54 +1,71 @@
 import React, { useEffect, useState } from 'react'
-import axios from '../axios';
+import myaxios from '../axios';
+import axios from 'axios'
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import StarRatings from 'react-star-ratings';
+
 
 const TargetList = ({ targets }) => {
     const [targetList, setTargetList] = useState([]);
 
-    // FUCNTION TO GET DETAILS OF ALL TARGETS
-    const getAllTargetsDetails = async () => {
-        var dataArray = []
-        await targets.map(tid => axios.get(`/${tid}`)
-        .then(res => {
-            dataArray.push(res)
-            setTargetList([...targetList, res])
-            // console.log(res)
-        }))
-        // setTargetList(dataArray)
-        console.log(targetList)
-    }
-
-
-    // RENDER ALL TARGET DETAILS
-    const renderTargets = () => {
-        return targetList.map(target => (
-            <div key={target.data.target_record.target_id}>
-                <p>{target.data.target_record.name}</p>
-            </div>
-        ))
-    }
-
     useEffect(() => {
-        if(targets.length !== 0){
-            getAllTargetsDetails()
-        } 
-        console.log(targetList)
+        axios.all(targets.map((target) => myaxios.get(`/targets/${target}`))).then(
+            (data) => setTargetList(data),
+        );
+        // console.log(targetList)
     }, [targets])
 
-    
+
+    const deleteTarget = (id) => {
+        confirmAlert({
+            title: 'Delete',
+            message: 'Are you sure to delete this target?.',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => {
+                        myaxios.delete(`/targets/${id}`)
+                        .then(res => {
+                            if(res.data.result_code === 'Success'){
+                                // alert('Target Deleted Successfully')
+                                window.location.reload()
+                            }
+                            console.log(res)
+                        })
+                    }
+                },
+                {
+                    label: 'No',
+                    onClick: () => {console.log('closed')}
+                }
+            ]
+        });
+    }
+
     return (
-        <div>
-            {/* {targetList.length !== 0 ? renderTargets() :
-                                    <div className="spinner-border text-success d-flex justify-content" role="status">
-                                        <span className="sr-only text-center">Loading...</span>
-                                    </div>} */}
-            {/* {targetList.length !== 0 ? targetList.map(t => <p>lalaal</p>) : null} */}
-            {/* {targetList.map(target => (
-                <div>
-                    <p>lalalalal</p>
-                </div>
-            ))} */}
-            {/* {renderTargets()} */}
-            {targetList.length !==0 ? <p>sadasd</p> : <p>nulllllllllllllll</p>}
+        <div className="d-flex justify-content-center">
+            <table className="table table-hover  bg-white" style={{ borderRadius: 30 }}>
+                <thead>
+                    <tr>
+                        <th className="pl-5" scope="col">Name</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {targetList.length !== 0 ? targetList.map(target => (
+                        <tr key={target.data.target_record.target_id}>
+                            <td className="pl-5">{target.data.target_record.name}</td>
+                            <td><StarRatings rating={target.data.target_record.tracking_rating} numberOfStars={5} starSpacing='2px' starDimension='25px' /></td>
+                            <td><i className='btn fa fa-trash' onClick={e => { deleteTarget(target.data.target_record.target_id) }} style={{ cursor: 'pointer', color: 'grey' }}></i></td>
+                        </tr>
+                    )) :
+                        <div className="d-flex justify-content-center text-center" >
+                            <div className="spinner-border text-primary mt-3 mb-4" role="status" style={{ marginLeft: 320 }}></div>
+                        </div>}
+                </tbody>
+            </table>
         </div>
     )
 }
