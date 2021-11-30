@@ -41,7 +41,7 @@ mongoose.connect("mongodb+srv://cherry:asd123@nft-monsters.jhjvg.mongodb.net/hmo
     console.log('Error Connecting...')
     console.log(err)
 })
-const PORT = process.env.PORT || 6000
+const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
     console.log('Server is running successfully on Port: ' + PORT)
 })
