@@ -82,7 +82,7 @@ const AddTarget = ({ adminInfo }) => {
             },
             method: "POST",
             data: formData,
-            url: `/targets/addVideo/:${fileName}`, // route name
+            url: `/targets/addVideo/${fileName}.mp4`, // route name
             // baseURL: "http://localhost:5000/api/upload", //local url
             onUploadProgress: progress => {
                 const { total, loaded } = progress;
