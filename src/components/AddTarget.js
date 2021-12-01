@@ -8,6 +8,7 @@ import './AddTarget.css'
 import crypto from 'crypto'
 import { Progress } from "reactstrap";
 import { useNavigate } from 'react-router-dom'
+import { confirmAlert } from 'react-confirm-alert';
 // import NotFound from './NotFound'
 // import { toast } from 'react-toastify';
 
@@ -23,6 +24,8 @@ const AddTarget = ({ adminInfo }) => {
     const [imageUploadSuccess, setImageUploadSuccess] = useState(false)
     const [uploadPercentage, setUploadPercentage] = useState(0);
     const [showProgressBar, setProgressBarVisibility] = useState(false);
+    const [imageProcessLoad, setImageProcessLoad] = useState(false)
+
 
     let navigate = useNavigate()
 
@@ -31,10 +34,15 @@ const AddTarget = ({ adminInfo }) => {
         let reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async () => {
+            setImageProcessLoad(true)
             const newImage = await Jimp.read(reader.result)
+            newImage.quality(70)
+            newImage.resize(600, Jimp.AUTO)
             newImage.greyscale()
+            console.log(newImage)
             newImage.getBase64Async(Jimp.MIME_JPEG)
                 .then(res => {
+                    setImageProcessLoad(false)
                     setImage(res)
                 })
         }
@@ -45,6 +53,7 @@ const AddTarget = ({ adminInfo }) => {
     const onImageChange = async (e) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0]
+            // console.log(e.target.files[0].size)
             if (file.name.split('.').pop() === 'jpeg' || file.name.split('.').pop() === 'png' || file.name.split('.').pop() === 'jpg') {
                 getBase64(file)
                 console.log(file)
@@ -134,7 +143,18 @@ const AddTarget = ({ adminInfo }) => {
                         const result = await postVideo(videoFile, fileName)
                         console.log(result)
                         setVideoUploading(false)
-                        window.location.reload();
+                        confirmAlert({
+                            title: 'Success',
+                            message: 'Image and Video Uploaded Successfully',
+                            buttons: [
+                                {
+                                    label: 'Ok',
+                                    onClick: () => {
+                                        window.location.reload();
+                                    }
+                                }
+                            ]
+                        })
                     } else {
                         alert('Target name already exists')
                     }
@@ -161,7 +181,10 @@ const AddTarget = ({ adminInfo }) => {
                                 <label htmlFor="formFile" className="form-label mt-3 d-block"><b>Select an Image File to Upload</b></label>
                                 <input className="form-control-sm" type="file" id="formFile" onChange={onImageChange} accept=".jpeg, .jpg, .png" />
                                 {imageMsg ? <p className="text-danger mt-2 ml-2">{imageMsg}</p> : null}
-                                {image ? <img src={image} width={200} alt='football' className="mt-1 border border-round" /> : null}
+                                {image && !imageProcessLoad ? <img src={image} width={200} alt='football' className="mt-1 border border-round" /> :
+                                    imageProcessLoad && !image ? <div className="spinner-border text-primary ml-5" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div> : null}
 
                                 {imageUploadSuccess ? <div className="alert alert-success mt-2" role="alert">
                                     Image Uploaded Successfully
@@ -178,9 +201,9 @@ const AddTarget = ({ adminInfo }) => {
                                 /> : null}
                                 <hr />
 
-                                {imageUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Image...</button> :
-                                    videoUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Video...</button> :
-                                        <button className="btn btn-secondary mb-2    btn-lg btn-block" type="submit" onClick={submitHandler}>Upload</button>}
+                                {imageUploading ? <button className="btn btn-secondary btn-lg btn-block">Uploading Image...</button> :
+                                    videoUploading ? <button className="btn btn-success btn-lg btn-block">Uploading Video...</button> :
+                                        <button className="btn btn-primary mb-2    btn-lg btn-block" type="submit" onClick={submitHandler}>Upload</button>}
                             </div>
                         </div>
                     </div>
