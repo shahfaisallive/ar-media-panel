@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from '../axios'
 import { useNavigate } from 'react-router-dom'
 import './Login.css'
@@ -6,7 +6,7 @@ import Logo from './Logo.png'
 // import { toast } from 'react-toastify';
 
 
-const Login = () => {
+const Login = ({adminInfo}) => {
     let navigate = useNavigate()
 
     const [username, setUsername] = useState('');
@@ -30,9 +30,14 @@ const Login = () => {
         }
     }
 
+    useEffect(() => {
+        if(adminInfo){
+            navigate('/dashboard')
+        }
+    }, [])
     return (
         <div className="wrapper fadeInDown">
-            <div id="formContent">
+            {adminInfo ? navigate('/dashboard') : <div id="formContent">
                 <h2 className="text1"> Sign In here</h2>
 
                 <div className="fadeIn first">
@@ -52,7 +57,7 @@ const Login = () => {
                     <p className="text-muted">Please login to continue</p>
                 </div>
 
-            </div>
+            </div>}
         </div>
     )
 }

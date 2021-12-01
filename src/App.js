@@ -10,12 +10,17 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-      {adminInfo ? <Routes>
+        {/* {adminInfo ? <Routes>
           <Route path="/dashboard" element={<Dashboard />} adminInfo={adminInfo} />
           <Route path="/addtarget" element={<AddTarget />} adminInfo={adminInfo} />
         </Routes> : <Routes>
           <Route path="/" element={<Login />}/>
-        </Routes>}        
+        </Routes>}         */}
+        <Routes>
+        <Route path="/" element={<Login adminInfo={adminInfo}/>} />
+        <Route path="/dashboard" element={<Dashboard adminInfo={adminInfo} />}  />
+        <Route path="/addtarget" element={<AddTarget adminInfo={adminInfo} />}  />
+        </Routes>
       </BrowserRouter>
     </div>
   );

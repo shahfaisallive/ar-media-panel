@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import './AddTarget.css'
 import crypto from 'crypto'
 import { Progress } from "reactstrap";
+import { useNavigate } from 'react-router-dom'
 // import NotFound from './NotFound'
 // import { toast } from 'react-toastify';
 
@@ -23,6 +24,7 @@ const AddTarget = ({ adminInfo }) => {
     const [uploadPercentage, setUploadPercentage] = useState(0);
     const [showProgressBar, setProgressBarVisibility] = useState(false);
 
+    let navigate = useNavigate()
 
     // Base64 CONVERTER and IMAGE PROCESSING
     const getBase64 = (file) => {
@@ -149,37 +151,40 @@ const AddTarget = ({ adminInfo }) => {
 
     return (
         <div>
-            <Navbar />
-            <div className="container justify-content-center">
-                <h3 className="mt-4 text-center d-block">List New Target</h3>
-                <div className="row justify-content-center d-flex">
-                    <div className="add-target-form col-md-6 mt-3 pb-2 mb-5">
-                        <label htmlFor="formFile" className="form-label mt-3 d-block"><b>Select an Image File to Upload</b></label>
-                        <input className="form-control-sm" type="file" id="formFile" onChange={onImageChange} accept=".jpeg, .jpg, .png" />
-                        {imageMsg ? <p className="text-danger mt-2 ml-2">{imageMsg}</p> : null}
-                        {image ? <img src={image} width={200} alt='football' className="mt-1 border border-round" /> : null}
+            {!adminInfo ? navigate('/') :
+                <div>
+                    <Navbar />
+                    <div className="container justify-content-center">
+                        <h3 className="mt-4 text-center d-block">List New Target</h3>
+                        <div className="row justify-content-center d-flex">
+                            <div className="add-target-form col-md-6 mt-3 pb-2 mb-5">
+                                <label htmlFor="formFile" className="form-label mt-3 d-block"><b>Select an Image File to Upload</b></label>
+                                <input className="form-control-sm" type="file" id="formFile" onChange={onImageChange} accept=".jpeg, .jpg, .png" />
+                                {imageMsg ? <p className="text-danger mt-2 ml-2">{imageMsg}</p> : null}
+                                {image ? <img src={image} width={200} alt='football' className="mt-1 border border-round" /> : null}
 
-                        {imageUploadSuccess ? <div className="alert alert-success mt-2" role="alert">
-                            Image Uploaded Successfully
-                        </div> : null}
-                        <hr />
-                        <label htmlFor="formFile" className="form-label mt-2 d-block"><b>Select a Video File to Upload</b></label>
-                        <input className="form-control-sm mb-3" type="file" id="formFile" onChange={onVideoChange} accept=".mp4" />
-                        {videoMsg ? <p className="text-danger mt-2">{videoMsg}</p> : null}
-                       
-                       {showProgressBar ? <Progress
-                            animated={parseInt(uploadPercentage) !== 100}
-                            color="success"
-                            value={uploadPercentage}
-                        /> : null}
-                        <hr />
+                                {imageUploadSuccess ? <div className="alert alert-success mt-2" role="alert">
+                                    Image Uploaded Successfully
+                                </div> : null}
+                                <hr />
+                                <label htmlFor="formFile" className="form-label mt-2 d-block"><b>Select a Video File to Upload</b></label>
+                                <input className="form-control-sm mb-3" type="file" id="formFile" onChange={onVideoChange} accept=".mp4" />
+                                {videoMsg ? <p className="text-danger mt-2">{videoMsg}</p> : null}
 
-                        {imageUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Image...</button> :
-                            videoUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Video...</button> :
-                                <button className="btn btn-success btn-lg btn-block" type="submit" onClick={submitHandler}>Upload</button>}
+                                {showProgressBar ? <Progress
+                                    animated={parseInt(uploadPercentage) !== 100}
+                                    color="success"
+                                    value={uploadPercentage}
+                                /> : null}
+                                <hr />
+
+                                {imageUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Image...</button> :
+                                    videoUploading ? <button className="btn btn-primary btn-lg btn-block">Uploading Video...</button> :
+                                        <button className="btn btn-secondary mb-2    btn-lg btn-block" type="submit" onClick={submitHandler}>Upload</button>}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>}
         </div>
     )
 }
