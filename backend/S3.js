@@ -28,7 +28,8 @@ function uploadFile(file, fileName) {
     Bucket: bucketName,
     Body: fileStream,
     Key: fileName,
-    ACL: 'public-read'
+    ACL: 'public-read',
+    ContentType: 'video/mp4'
   }
 
   return s3.upload(uploadParams).promise()
@@ -46,3 +47,22 @@ function getFileStream(fileKey) {
   return s3.getObject(downloadParams).createReadStream()
 }
 exports.getFileStream = getFileStream
+
+
+// Upload through multer s3
+// var uploadFile = multer({
+//   storage: multerS3({
+//     s3: s3,
+//     bucket: bucketName,
+//     contentType: multerS3.AUTO_CONTENT_TYPE,
+//     metadata: function (req, file, cb) {
+//       cb(null, {fieldName: file.fieldname});
+//     },
+//     key: function (req, file, cb) {
+//       cb(null, Date.now().toString()+'.mp4')
+//     },
+//     acl: 'public-read'
+//   })
+// })
+
+exports.uploadFile = uploadFile

@@ -4,12 +4,29 @@ const vuforia = require('vuforia-api')
 const fs = require('fs')
 const util = require('util')
 const unlinkFile = util.promisify(fs.unlink)
+var ffmpeg = require("ffmpeg");
+// var ffmpeg = require('fluent-ffmpeg');
 // const {protectAdmin} = require('../middleware/auth')
 
 const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
+// const upload = multer({ dest: 'uploads/' })
 
 const { uploadFile } = require('../S3')
+
+const multerStorage = multer.diskStorage({
+    destination:(req,file,cb)=>{
+      cb(null,'uploads/')
+    },
+    filename:(req,file,cb)=>{
+      const ext = file.mimetype.split('/')[1];
+      cb(null,`${file.filename}.${ext}`)
+    }
+  })
+
+  const upload = multer({
+    storage: multerStorage,
+  })
+  
 
 
 
@@ -60,16 +77,49 @@ router.post('/addtarget', async (req, res) => {
 })
 
 // Add video to S3
+// router.post('/addVideo/:filename',upload.single('video'), async (req, res) => {
+//     const file = req.file
+//     console.log(file.filename)
+
+//     const result = await uploadFile(file, req.params.filename)
+
+//     await unlinkFile(file.path)
+//     console.log(result)
+//     res.send(result)
+// })
+
 router.post('/addVideo/:filename',upload.single('video'), async (req, res) => {
     const file = req.file
-    console.log(file)
+    console.log(file.filename)
+
+    // conversion
+    try {
+		var process = new ffmpeg(file.path);
+		process.then(async function (video) {
+			// Video metadata
+			console.log(video.metadata);
+			// FFmpeg configuration
+			// console.log(video.info_configuration);
+            await video
+            .setVideoFormat("mp4")
+                .setVideoCodec("h264")
+                .save('/uploads/asdas.mp4');
+		}, function (err) {
+			console.log('Error: ' + err);
+		});
+	} catch (e) {
+		console.log(e.code);
+		console.log(e.msg);
+	}
+
 
     const result = await uploadFile(file, req.params.filename)
+
     await unlinkFile(file.path)
     console.log(result)
-    // res.send({videoPath: `/videos/${result.Key}`})
     res.send(result)
 })
+
 
 
 // Get all targets 
