@@ -23,7 +23,7 @@ const s3 = new S3({
 })
 
 // uploads a file to s3
-function uploadFile(file, fileName) {
+function uploadFile(fileName, ffupfront) {
   // const fileStream = fs.createReadStream(file.path)
 
   // const uploadParams = {
