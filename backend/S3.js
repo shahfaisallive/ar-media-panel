@@ -24,17 +24,30 @@ const s3 = new S3({
 
 // uploads a file to s3
 function uploadFile(file, fileName) {
-  const fileStream = fs.createReadStream(file.path)
+  // const fileStream = fs.createReadStream(file.path)
 
-  const uploadParams = {
-    Bucket: bucketName,
-    Body: fileStream,
-    Key: fileName,
-    ACL: 'public-read',
-    ContentType: 'video/mp4'
-  }
+  // const uploadParams = {
+  //   Bucket: bucketName,
+  //   Body: fileStream,
+  //   Key: fileName,
+  //   ACL: 'public-read',
+  //   ContentType: 'video/mp4'
+  // }
 
-  return s3.upload(uploadParams).promise()
+  // return s3.upload(uploadParams).promise()
+
+  fs.readFile(fileName, (err, data) => {
+    if (err) throw err;
+    const params = {
+        Bucket: bucketName, // pass your bucket name
+        Key: fileName,
+        Body: JSON.stringify(data, null, 2)
+    };
+    s3.upload(params, function(s3Err, data) {
+        if (s3Err) throw s3Err
+        console.log(`File uploaded successfully at ${data.Location}`)
+    });
+ });
 }
 exports.uploadFile = uploadFile
 
