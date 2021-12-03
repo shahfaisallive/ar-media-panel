@@ -12,23 +12,23 @@ var ffmpeg = require("ffmpeg");
 // const {protectAdmin} = require('../middleware/auth')
 
 const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
+// const upload = multer({ dest: 'uploads/' })
 
 const { uploadFile } = require('../S3')
 
-// const multerStorage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads/')
-//     },
-//     filename: (req, file, cb) => {
-//         const ext = file.mimetype.split('/')[1];
-//         cb(null, `${Date.now()}.${ext}`)
-//     }
-// })
+const multerStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/')
+    },
+    filename: (req, file, cb) => {
+        const ext = file.mimetype.split('/')[1];
+        cb(null, `${Date.now()}.${ext}`)
+    }
+})
 
-// const upload = multer({
-//     storage: multerStorage,
-// })
+const upload = multer({
+    storage: multerStorage,
+})
 
 
 // VUFORIAL CLIENT SETUP
@@ -100,7 +100,7 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
 
         video.setVideoFormat("mp4").setVideoCodec("h264")
         console.log('here1')
-        await video.save("/uploads/" + file.originalname + "_new.mp4");
+        await video.save("./uploads/" + file.originalname + "_new.mp4");
         console.log('here2')
 
         const result = await uploadFile(file, req.params.filename)
