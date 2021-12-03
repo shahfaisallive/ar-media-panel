@@ -122,59 +122,59 @@ const AddTarget = ({ adminInfo }) => {
 
 
     // SUBMIT HANDLER TO ADD IMAGE
-    // const submitHandler = async (e) => {
-    //     if (image && videoFile) {
-    //         console.log(targets.length)
-    //         const fileName = crypto.randomBytes(6).toString("hex")
-    //         e.preventDefault()
-    //         setImageUploading(true)
-    //         const imgObj = { name: fileName, imagePath: image }
-    //         axios.post('/targets/addtarget', imgObj)
-    //             .then(async res => {
-    //                 console.log(res.data)
-    //                 setImageUploadSuccess(true)
-    //                 // alert('Image Uploaded Successfully')
-    //                 // toast.success("Image Uplaoded Successfully", {
-    //                 //     position: toast.POSITION.TOP_CENTER
-    //                 // })
-    //                 if (res.data.result_code === "TargetCreated") {
-    //                     setImageUploading(false)
-    //                     setVideoUploading(true)
-    //                     const result = await postVideo(videoFile, fileName)
-    //                     console.log(result)
-    //                     setVideoUploading(false)
-    //                     confirmAlert({
-    //                         title: 'Success',
-    //                         message: 'Image and Video Uploaded Successfully',
-    //                         buttons: [
-    //                             {
-    //                                 label: 'Ok',
-    //                                 onClick: () => {
-    //                                     window.location.reload();
-    //                                 }
-    //                             }
-    //                         ]
-    //                     })
-    //                 } else {
-    //                     alert('Target name already exists')
-    //                 }
-    //             })
-    //             .catch(err => {
-    //                 console.log(err)
-    //                 alert('Image Uploading Failed')
-    //                 setImageUploading(false)
-    //             })
-    //     } else {
-    //         alert('Something is missing in the form, select both files')
-    //     }
-    // }
-
     const submitHandler = async (e) => {
-        e.preventDefault()
-        const fileName = crypto.randomBytes(6).toString("hex")
-        const result = await postVideo(videoFile, fileName)
-        console.log(result)
+        if (image && videoFile) {
+            console.log(targets.length)
+            const fileName = crypto.randomBytes(6).toString("hex")
+            e.preventDefault()
+            setImageUploading(true)
+            const imgObj = { name: fileName, imagePath: image }
+            axios.post('/targets/addtarget', imgObj)
+                .then(async res => {
+                    console.log(res.data)
+                    setImageUploadSuccess(true)
+                    // alert('Image Uploaded Successfully')
+                    // toast.success("Image Uplaoded Successfully", {
+                    //     position: toast.POSITION.TOP_CENTER
+                    // })
+                    if (res.data.result_code === "TargetCreated") {
+                        setImageUploading(false)
+                        setVideoUploading(true)
+                        const result = await postVideo(videoFile, fileName)
+                        console.log(result)
+                        setVideoUploading(false)
+                        confirmAlert({
+                            title: 'Success',
+                            message: 'Image and Video Uploaded Successfully',
+                            buttons: [
+                                {
+                                    label: 'Ok',
+                                    onClick: () => {
+                                        window.location.reload();
+                                    }
+                                }
+                            ]
+                        })
+                    } else {
+                        alert('Target name already exists')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    alert('Image Uploading Failed')
+                    setImageUploading(false)
+                })
+        } else {
+            alert('Something is missing in the form, select both files')
+        }
     }
+
+    // const submitHandler = async (e) => {
+    //     e.preventDefault()
+    //     const fileName = crypto.randomBytes(6).toString("hex")
+    //     const result = await postVideo(videoFile, fileName)
+    //     console.log(result)
+    // }
 
     return (
         <div>
