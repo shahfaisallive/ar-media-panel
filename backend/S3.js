@@ -4,8 +4,10 @@ const S3 = require('aws-sdk/clients/s3')
 
 const bucketName = 'cherry-pix-bucket'
 const region = 'eu-west-2'
-const accessKeyId = process.env.IAM_ACCESS_KEY
-const secretAccessKey = process.env.IAM_SECRET_KEY
+// const accessKeyId = process.env.IAM_ACCESS_KEY
+// const secretAccessKey = process.env.IAM_SECRET_KEY
+const accessKeyId = 'AKIA5ZCBRGJV2IFJXSOD'
+const secretAccessKey = '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'  
 
 
 // Test
