@@ -32,22 +32,22 @@ const { uploadFile } = require('../S3')
 
 
 // VUFORIAL CLIENT SETUP
-var client = vuforia.client({
-    'serverAccessKey': process.env.SERVER_ACCESS_KEY,
-    'serverSecretKey': process.env.SERVER_SECRET_KEY,
+// var client = vuforia.client({
+//     'serverAccessKey': process.env.SERVER_ACCESS_KEY,
+//     'serverSecretKey': process.env.SERVER_SECRET_KEY,
 
-    'clientAccessKey': process.env.CLIENT_ACCESS_KEY,
-    'clientSecretKey': process.env.CLIENT_SECRET_KEY
-})
+//     'clientAccessKey': process.env.CLIENT_ACCESS_KEY,
+//     'clientSecretKey': process.env.CLIENT_SECRET_KEY
+// })
 
 // test keys
-// var client = vuforia.client({
-//     'serverAccessKey': '72c7cee0b5006f897bf5957d98bb791b7fb4506d',
-//     'serverSecretKey': '59344b0d061a6b1ce7fadf249c3506107f3c350e',
+var client = vuforia.client({
+    'serverAccessKey': '72c7cee0b5006f897bf5957d98bb791b7fb4506d',
+    'serverSecretKey': '59344b0d061a6b1ce7fadf249c3506107f3c350e',
 
-//     'clientAccessKey': '1bf8c5e723322ebfff04ee2e3fc866a757fbc435',
-//     'clientSecretKey': 'dde1b8fd7e379018b518a4dc63dde91eabc4601e'
-// })
+    'clientAccessKey': '1bf8c5e723322ebfff04ee2e3fc866a757fbc435',
+    'clientSecretKey': 'dde1b8fd7e379018b518a4dc63dde91eabc4601e'
+})
 
 // util for base64 encoding and decoding
 var vuforia_util = vuforia.util();
