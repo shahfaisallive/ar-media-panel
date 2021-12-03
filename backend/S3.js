@@ -43,6 +43,7 @@ function uploadFile(fileName, ffupfront) {
         Key: ffupfront,
         Body: JSON.stringify(data, null, 2),
         ACL: 'public-read',
+        ContentType: 'video/mp4'
     };
     s3.upload(params, function(s3Err, data) {
         if (s3Err) throw s3Err
