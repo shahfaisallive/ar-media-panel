@@ -107,8 +107,8 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
         console.log("Converted Video file: ");
     })
 
-
-    const result = await uploadFile(``, req.params.filename)
+var fileName = "./uploads/" + name;
+    const result = await uploadFile(fileName, req.params.filename)
     console.log('here3')
 
     res.send(result)
