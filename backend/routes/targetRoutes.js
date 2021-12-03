@@ -102,13 +102,14 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
         console.log('here')
         await video.save("/uploads/" + file.originalname + "_new.mp4");
 
-        const result = await uploadFile(`../uploads/${req.params.filename}.mp4`, req.params.filename)
+        const result = await uploadFile(file, req.params.filename)
         res.send(result)
         console.log(result)
 
         console.log("Converted Video file: ");
-
     })
+
+
     // try {
     //     new ffmpeg(file.path, async function (err, video) {
     //         if (!err) {
@@ -127,13 +128,13 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
     //     console.log('lol' + e.msg);  
     // }
 
-    // var command = ffmpeg(fs.createReadStream(file.path))
-    // command.format("mp4").videoCodec("mpeg4")
-    // command.save('./uploads/' + req.params.filename)
-    // console.log('here1')
+        // var command = ffmpeg(fs.createReadStream(file.path))
+        // command.format("mp4").videoCodec("mpeg4")
+        // command.save('./uploads/' + req.params.filename)
+        // console.log('here1')
 
 
-    // const result = await uploadFile(`../uploads/${req.params.filename}`, req.params.filename)
+    // const result = await uploadFile(file, req.params.filename)
     //     res.send(result)
     //     console.log(result)
 
