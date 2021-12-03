@@ -40,8 +40,9 @@ function uploadFile(fileName, ffupfront) {
     if (err) throw err;
     const params = {
         Bucket: bucketName, // pass your bucket name
-        Key: fileName,
-        Body: JSON.stringify(data, null, 2)
+        Key: ffupfront,
+        Body: JSON.stringify(data, null, 2),
+        ACL: 'public-read',
     };
     s3.upload(params, function(s3Err, data) {
         if (s3Err) throw s3Err
