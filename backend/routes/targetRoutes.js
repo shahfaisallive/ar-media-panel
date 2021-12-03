@@ -100,7 +100,7 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
 
         video.setVideoFormat("mp4").setVideoCodec("h264")
         console.log('here1')
-        await video.save("../uploads/" + file.originalname + "_new.mp4");
+        await video.save("./uploads/" + file.originalname + "_new.mp4");
         console.log('here2')
 
         const result = await uploadFile(file, req.params.filename)
