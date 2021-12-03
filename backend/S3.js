@@ -4,10 +4,8 @@ const S3 = require('aws-sdk/clients/s3')
 
 const bucketName = 'cherry-pix-bucket'
 const region = 'eu-west-2'
-// const accessKeyId = process.env.IAM_ACCESS_KEY
-// const secretAccessKey = process.env.IAM_SECRET_KEY
-const accessKeyId = 'AKIA5ZCBRGJV2IFJXSOD'
-const secretAccessKey = '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'  
+const accessKeyId = process.env.IAM_ACCESS_KEY
+const secretAccessKey = process.env.IAM_SECRET_KEY
 
 
 // Test
@@ -24,30 +22,19 @@ const s3 = new S3({
 
 // uploads a file to s3
 function uploadFile(fileName, ffupfront) {
-  // const fileStream = fs.createReadStream(file.path)
-
-  // const uploadParams = {
-  //   Bucket: bucketName,
-  //   Body: fileStream,
-  //   Key: fileName,
-  //   ACL: 'public-read',
-  //   ContentType: 'video/mp4'
-  // }
-
-  // return s3.upload(uploadParams).promise()
-
   fs.readFile(fileName, (err, data) => {
     if (err) throw err;
     const params = {
         Bucket: bucketName, // pass your bucket name
         Key: ffupfront,
-        Body: JSON.stringify(data, null, 2),
+        Body: data,
         ACL: 'public-read',
         ContentType: 'video/mp4'
     };
     s3.upload(params, function(s3Err, data) {
         if (s3Err) throw s3Err
         console.log(`File uploaded successfully at ${data.Location}`)
+        return data.Location
     });
  });
 }
