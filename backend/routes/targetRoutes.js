@@ -4,10 +4,10 @@ const vuforia = require('vuforia-api')
 const fs = require('fs')
 const util = require('util')
 const unlinkFile = util.promisify(fs.unlink)
-// var ffmpeg = require("ffmpeg");
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path
-var ffmpeg = require('fluent-ffmpeg');
-ffmpeg.setFfmpegPath(ffmpegPath);
+var ffmpeg = require("ffmpeg");
+// const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path
+// var ffmpeg = require('fluent-ffmpeg');
+// ffmpeg.setFfmpegPath(ffmpegPath);
 
 // const {protectAdmin} = require('../middleware/auth')
 
@@ -94,14 +94,29 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
     console.log(file.path)
 
     // conversion
+    var process = new ffmpeg(file.path);
+    await process.then(async function (video) {
+        console.log("File is ready to be processed");
+
+        video.setVideoFormat("mp4").setVideoCodec("h264")
+        console.log('here')
+        await video.save("/uploads/" + file.originalname + "_new.mp4");
+
+        const result = await uploadFile(`../uploads/${req.params.filename}.mp4`, req.params.filename)
+        res.send(result)
+        console.log(result)
+
+        console.log("Converted Video file: ");
+
+    })
     // try {
-    //     new ffmpeg(file.path, function (err, video) {
+    //     new ffmpeg(file.path, async function (err, video) {
     //         if (!err) {
     //             console.log('The video is ready to be processed');
     //             video.setVideoFormat("mp4")
     //             video.setVideoCodec("h264")
     //             console.log(video)
-    //             video.save("/uploads/" + file.originalname + "_new.mp4")
+    //             await video.save("/uploads/" + file.originalname + "_new.mp4")
     //             console.log('video: ' + video)
     //         } else {
     //             console.log('Error1111: ' + err);
@@ -112,10 +127,10 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
     //     console.log('lol' + e.msg);  
     // }
 
-    var command = ffmpeg(fs.createReadStream(file.path))
-    command.format("mp4").videoCodec("libx264")
-    command.save('./uploads/' + req.params.filename)
-    console.log('here1')
+    // var command = ffmpeg(fs.createReadStream(file.path))
+    // command.format("mp4").videoCodec("mpeg4")
+    // command.save('./uploads/' + req.params.filename)
+    // console.log('here1')
 
 
     // const result = await uploadFile(`../uploads/${req.params.filename}`, req.params.filename)
