@@ -93,6 +93,7 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
     const file = req.file
     console.log(file.path)
 
+    var name = req.params.filename
     // conversion
     var process = new ffmpeg(file.path);
     await process.then(async function (video) {
@@ -100,7 +101,7 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
 
         video.setVideoFormat("mp4").setVideoCodec("h264")
         console.log('here1')
-        await video.save("./uploads/" + req.params.name + ".mp4");
+        await video.save("./uploads/" + name + ".mp4");
         console.log('here2')
 
         console.log("Converted Video file: ");
