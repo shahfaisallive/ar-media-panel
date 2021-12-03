@@ -101,50 +101,22 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
 
         video.setVideoFormat("mp4").setVideoCodec("h264")
         console.log('here1')
-        await video.save("./uploads/" + name + ".mp4");
+        await video.save("./uploads/" + name);
         console.log('here2')
 
         console.log("Converted Video file: ");
     })
 
+    const newFile = await fs.readFileSync(`./uploads/${name}`)
 
-    const result = await uploadFile(file, req.params.filename)
+
+    const result = await uploadFile(newFile, req.params.filename)
     console.log('here3')
 
     res.send(result)
     console.log(result)
 
-
-    // try {
-    //     new ffmpeg(file.path, async function (err, video) {
-    //         if (!err) {
-    //             console.log('The video is ready to be processed');
-    //             video.setVideoFormat("mp4")
-    //             video.setVideoCodec("h264")
-    //             console.log(video)
-    //             await video.save("/uploads/" + file.originalname + "_new.mp4")
-    //             console.log('video: ' + video)
-    //         } else {
-    //             console.log('Error1111: ' + err);
-    //         }
-    //     });
-    // } catch (e) {
-    //     console.log('errorThis' + e.code);
-    //     console.log('lol' + e.msg);  
-    // }
-
-    // var command = ffmpeg(fs.createReadStream(file.path))
-    // command.format("mp4").videoCodec("mpeg4")
-    // command.save('./uploads/' + req.params.filename)
-    // console.log('here1')
-
-
-    // const result = await uploadFile(file, req.params.filename)
-    //     res.send(result)
-    //     console.log(result)
-
-
-    // await unlinkFile(file.path)
+    await unlinkFile(file.path)
 })
 
 
