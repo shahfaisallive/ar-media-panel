@@ -4,7 +4,6 @@ import axios from 'axios'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import StarRatings from 'react-star-ratings';
-import date from 'date-and-time';
 
 
 const TargetList = ({ targets, targetsMeta }) => {
@@ -13,7 +12,8 @@ const TargetList = ({ targets, targetsMeta }) => {
     useEffect(() => {
         axios.all(targets.map((target) => myaxios.get(`/targets/${target}`))).then(
             (data) => {
-                setTargetList(data);
+                setTargetList(data.sort((x,y) => (x.data.target_record.tracking_rating - y.data.target_record.tracking_rating )));
+                // setTargetList(data)
                 console.log(data)
             },
         );

@@ -189,7 +189,8 @@ const AddTarget = ({ adminInfo }) => {
                         <div className="row justify-content-center d-flex">
                             <div className="add-target-form col-md-6 mt-3 pb-2 mb-5">
                                 <label htmlFor="nameField" className="form-label mt-3 d-block"><b>File name</b></label>
-                                <input className="form-control text-left" type="text" id="nameField" onChange={onNameChange} value={imgName} />
+                                <input className="form-control text-left" type="text" id="nameField" onChange={onNameChange}
+                                style={{padding: '6px'}} value={imgName} />
 
                                 <label htmlFor="formFile" className="form-label mt-3 d-block"><b>Select an Image File to Upload</b></label>
                                 <input className="form-control-sm" type="file" id="formFile" onChange={onImageChange} accept=".jpeg, .jpg, .png" />
