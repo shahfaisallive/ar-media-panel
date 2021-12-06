@@ -4,8 +4,7 @@ import axios from 'axios'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import StarRatings from 'react-star-ratings';
-import Moment from 'react-moment';
-
+import date from 'date-and-time';
 
 
 const TargetList = ({ targets, targetsMeta }) => {
@@ -65,10 +64,7 @@ const TargetList = ({ targets, targetsMeta }) => {
             <>
                 {targetsMeta.map((tm) => {
                     if (tm.targetName === image) {
-                        // return <p>{`${tm.createdAt.substring(0, 10)} (${tm.createdAt.substring(11, 16)})`}</p>
-                        return <Moment>
-                            {tm.createdAt}
-                            </Moment>
+                        return <p>{tm.date}</p>
                     }
                 })}
             </>

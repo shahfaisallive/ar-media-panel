@@ -8,6 +8,9 @@ const TargetSchema = mongoose.Schema({
     targetName: {
         type: String,
         required: true
+    },
+    date: {
+        type: String
     }
 },
     {

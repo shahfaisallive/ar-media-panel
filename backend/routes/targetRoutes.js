@@ -6,6 +6,7 @@ const fs = require('fs')
 const util = require('util')
 const unlinkFile = util.promisify(fs.unlink)
 var ffmpeg = require("ffmpeg");
+const dateFormat = require('date-and-time')
 
 // const {protectAdmin} = require('../middleware/auth')
 
@@ -74,10 +75,11 @@ router.post('/addtarget', async (req, res, next) => {
         }
     });
 
-
+    const now = new Date();
     const createdTarget = new Target({
         imageName: imageName,
-        targetName: targetName
+        targetName: targetName,
+        date: dateFormat.format(now, 'ddd, MMM DD YYYY')
     });
 
     try {
