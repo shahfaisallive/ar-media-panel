@@ -12,7 +12,7 @@ const TargetList = ({ targets, targetsMeta }) => {
     useEffect(() => {
         axios.all(targets.map((target) => myaxios.get(`/targets/${target}`))).then(
             (data) => {
-                setTargetList(data.sort((x,y) => (x.data.target_record.tracking_rating - y.data.target_record.tracking_rating )));
+                setTargetList(data.sort((y,x) => (x.data.target_record.tracking_rating - y.data.target_record.tracking_rating )));
                 // setTargetList(data)
                 console.log(data)
             },
