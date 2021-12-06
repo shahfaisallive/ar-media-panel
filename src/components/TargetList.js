@@ -4,6 +4,8 @@ import axios from 'axios'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import StarRatings from 'react-star-ratings';
+import Moment from 'react-moment';
+
 
 
 const TargetList = ({ targets, targetsMeta }) => {
@@ -63,7 +65,10 @@ const TargetList = ({ targets, targetsMeta }) => {
             <>
                 {targetsMeta.map((tm) => {
                     if (tm.targetName === image) {
-                        return <p>{`${tm.createdAt.substring(0,10)} (${tm.createdAt.substring(11,16)})`}</p>
+                        // return <p>{`${tm.createdAt.substring(0, 10)} (${tm.createdAt.substring(11, 16)})`}</p>
+                        return <Moment>
+                            {tm.createdAt}
+                            </Moment>
                     }
                 })}
             </>
@@ -75,8 +80,8 @@ const TargetList = ({ targets, targetsMeta }) => {
             <table className="table table-hover text-center bg-white" style={{ borderRadius: 30 }}>
                 <thead>
                     <tr>
-                        <th className="pl-5" scope="col">Target Name</th>
                         <th className="pl-5" scope="col">Image Name</th>
+                        <th className="pl-5" scope="col">Target Name</th>
                         <th scope="col">Rating</th>
                         <th scope="col">Added on</th>
                         <th scope="col">Action</th>
@@ -85,9 +90,9 @@ const TargetList = ({ targets, targetsMeta }) => {
                 <tbody>
                     {targetList.length !== 0 ? targetList.map(target => (
                         <tr key={target.data.target_record.target_id}>
-                            <td className="pl-5">{target.data.target_record.name}</td>
-
                             <td className="pl-5">{renderImageName(target.data.target_record.name)}</td>
+
+                            <td className="pl-5">{target.data.target_record.name}</td>
 
                             <td><StarRatings rating={target.data.target_record.tracking_rating} numberOfStars={5} starSpacing='2px' starDimension='25px' /></td>
 

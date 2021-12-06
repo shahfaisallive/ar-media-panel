@@ -55,22 +55,7 @@ var vuforia_util = vuforia.util();
 router.post('/addtarget', async (req, res, next) => {
     const { targetName, imagePath, imageName } = req.body
     const imgPath = imagePath.slice(23)
-
-    const createdTarget = new Target({
-        imageName,
-        targetName
-    });
-
-    try {
-        await createdTarget.save();
-    } catch (err) {
-        const error = new Error('Creating target failed, please try again.', 500);
-        return next(error);
-    }
-
-    console.log(createdTarget)
-
-
+    console.log(targetName)
     var target = {
         'name': targetName,
         'width': 500,
@@ -89,6 +74,19 @@ router.post('/addtarget', async (req, res, next) => {
         }
     });
 
+
+    const createdTarget = new Target({
+        imageName: imageName,
+        targetName: targetName
+    });
+
+    try {
+        await createdTarget.save();
+    } catch (err) {
+        console.log(err)
+    }
+
+    console.log(createdTarget)
 
 })
 

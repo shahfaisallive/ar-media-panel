@@ -14,7 +14,7 @@ import { confirmAlert } from 'react-confirm-alert';
 
 
 const AddTarget = ({ adminInfo }) => {
-    const [name, setName] = useState("");
+    const [imgName, setName] = useState("");
     const [targets, setTargets] = useState([]);
     const [image, setImage] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
@@ -129,63 +129,55 @@ const AddTarget = ({ adminInfo }) => {
         // getAllTargetDetails()
     }, [])
 
-
-    // SUBMIT HANDLER TO ADD IMAGE
-    const submitHandler = async (e) => {
-        if (image && videoFile) {
-            // console.log(targets.length)
-            const fileName = crypto.randomBytes(6).toString("hex")
-            e.preventDefault()
-            setImageUploading(true)
-            const imgObj = { targetName: fileName, imagePath: image, imageName: name }
-            axios.post('/targets/addtarget', imgObj)
-                .then(async res => {
-                    console.log(res.data)
-                    setImageUploadSuccess(true)
-                    // alert('Image Uploaded Successfully')
-                    // toast.success("Image Uplaoded Successfully", {
-                    //     position: toast.POSITION.TOP_CENTER
-                    // })
-
-                    if (res.data.result_code === "TargetCreated") {
-                        setImageUploading(false)
-                        setVideoUploading(true)
-                        const result = await postVideo(videoFile, fileName)
-                        console.log(result)
-                        setVideoUploading(false)
-                        setVideoUploadProcess(false)
-                        confirmAlert({
-                            title: 'Success',
-                            message: 'Image and Video Uploaded Successfully',
-                            buttons: [
-                                {
-                                    label: 'Ok',
-                                    onClick: () => {
-                                        window.location.reload();
+        // SUBMIT HANDLER TO ADD IMAGE
+        const submitHandler = async (e) => {
+            if (image && videoFile) {
+                const fileName = crypto.randomBytes(6).toString("hex")
+                e.preventDefault()
+                setImageUploading(true)
+                const imgObj = { targetName: fileName, imagePath: image, imageName: imgName }
+                axios.post('/targets/addtarget', imgObj)
+                    .then(async res => {
+                        console.log(res.data)
+                        setImageUploadSuccess(true)
+                        // alert('Image Uploaded Successfully')
+                        // toast.success("Image Uplaoded Successfully", {
+                        //     position: toast.POSITION.TOP_CENTER
+                        // })
+                        if (res.data.result_code === "TargetCreated") {
+                            setImageUploading(false)
+                            setVideoUploading(true)
+                            const result = await postVideo(videoFile, fileName)
+                            console.log(result)
+                            setVideoUploading(false)
+                            setVideoUploadProcess(false)
+                            confirmAlert({
+                                title: 'Success',
+                                message: 'Image and Video Uploaded Successfully',
+                                buttons: [
+                                    {
+                                        label: 'Ok',
+                                        onClick: () => {
+                                            window.location.reload();
+                                        }
                                     }
-                                }
-                            ]
-                        })
-                    } else {
-                        alert('Target name already exists')
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                    alert('Image Uploading Failed')
-                    setImageUploading(false)
-                })
-        } else {
-            alert('Something is missing in the form, select both files')
+                                ]
+                            })
+                        } else {
+                            alert('Target name already exists')
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        alert('Image Uploading Failed')
+                        setImageUploading(false)
+                    })
+            } else {
+                alert('Something is missing in the form, select both files')
+            }
         }
-    }
+    
 
-    // const submitHandler = async (e) => {
-    //     e.preventDefault()
-    //     const fileName = crypto.randomBytes(6).toString("hex")
-    //     const result = await postVideo(videoFile, fileName)
-    //     console.log(result)
-    // }
 
     return (
         <div>
@@ -197,7 +189,7 @@ const AddTarget = ({ adminInfo }) => {
                         <div className="row justify-content-center d-flex">
                             <div className="add-target-form col-md-6 mt-3 pb-2 mb-5">
                                 <label htmlFor="nameField" className="form-label mt-3 d-block"><b>File name</b></label>
-                                <input className="form-control text-left" type="text" id="nameField" onChange={onNameChange} value={name} />
+                                <input className="form-control text-left" type="text" id="nameField" onChange={onNameChange} value={imgName} />
 
                                 <label htmlFor="formFile" className="form-label mt-3 d-block"><b>Select an Image File to Upload</b></label>
                                 <input className="form-control-sm" type="file" id="formFile" onChange={onImageChange} accept=".jpeg, .jpg, .png" />

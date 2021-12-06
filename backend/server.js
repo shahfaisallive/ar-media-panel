@@ -36,14 +36,14 @@ app.use('/api/admin', adminRoutes);
 app.use('/', (req, res) => res.send('Welcome to this Server'))
 
 // Server start up and DB connect
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("mongodb+srv://cherry:asd123@nft-monsters.jhjvg.mongodb.net/hmon-monsters?retryWrites=true&w=majority")
 .then(async ()=> {
     console.log('connected to MongoDB successfully...!');
 }).catch(err=>{
     console.log('Error Connecting...')
     console.log(err)
 })
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 4000
 app.listen(PORT, () => {
     console.log('Server is running successfully on Port: ' + PORT)
 })
