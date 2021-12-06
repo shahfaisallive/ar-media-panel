@@ -14,6 +14,7 @@ import { confirmAlert } from 'react-confirm-alert';
 
 
 const AddTarget = ({ adminInfo }) => {
+    const [name, setName] = useState("");
     const [targets, setTargets] = useState([]);
     const [image, setImage] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
@@ -25,6 +26,8 @@ const AddTarget = ({ adminInfo }) => {
     const [uploadPercentage, setUploadPercentage] = useState(0);
     const [showProgressBar, setProgressBarVisibility] = useState(false);
     const [imageProcessLoad, setImageProcessLoad] = useState(false)
+    const [videoUploadProcess, setVideoUploadProcess] = useState(false)
+
 
 
     let navigate = useNavigate()
@@ -47,6 +50,11 @@ const AddTarget = ({ adminInfo }) => {
                 })
         }
         reader.onerror = error => { console.log(error) };
+    }
+
+    // ON NAME CHANGE
+    const onNameChange = (e) => {
+        setName(e.target.value)
     }
 
     // ON IMAGE CHANGE FUNCTION TO CREATE BUFFER
@@ -104,6 +112,7 @@ const AddTarget = ({ adminInfo }) => {
             },
             encType: "multipart/form-data",
         });
+        setVideoUploadProcess(true)
         return result
     }
 
@@ -124,11 +133,11 @@ const AddTarget = ({ adminInfo }) => {
     // SUBMIT HANDLER TO ADD IMAGE
     const submitHandler = async (e) => {
         if (image && videoFile) {
-            console.log(targets.length)
+            // console.log(targets.length)
             const fileName = crypto.randomBytes(6).toString("hex")
             e.preventDefault()
             setImageUploading(true)
-            const imgObj = { name: fileName, imagePath: image }
+            const imgObj = { targetName: fileName, imagePath: image, imageName: name }
             axios.post('/targets/addtarget', imgObj)
                 .then(async res => {
                     console.log(res.data)
@@ -137,12 +146,14 @@ const AddTarget = ({ adminInfo }) => {
                     // toast.success("Image Uplaoded Successfully", {
                     //     position: toast.POSITION.TOP_CENTER
                     // })
+
                     if (res.data.result_code === "TargetCreated") {
                         setImageUploading(false)
                         setVideoUploading(true)
                         const result = await postVideo(videoFile, fileName)
                         console.log(result)
                         setVideoUploading(false)
+                        setVideoUploadProcess(false)
                         confirmAlert({
                             title: 'Success',
                             message: 'Image and Video Uploaded Successfully',
@@ -185,6 +196,9 @@ const AddTarget = ({ adminInfo }) => {
                         <h3 className="mt-4 text-center d-block">List New Target</h3>
                         <div className="row justify-content-center d-flex">
                             <div className="add-target-form col-md-6 mt-3 pb-2 mb-5">
+                                <label htmlFor="nameField" className="form-label mt-3 d-block"><b>File name</b></label>
+                                <input className="form-control text-left" type="text" id="nameField" onChange={onNameChange} value={name} />
+
                                 <label htmlFor="formFile" className="form-label mt-3 d-block"><b>Select an Image File to Upload</b></label>
                                 <input className="form-control-sm" type="file" id="formFile" onChange={onImageChange} accept=".jpeg, .jpg, .png" />
                                 {imageMsg ? <p className="text-danger mt-2 ml-2">{imageMsg}</p> : null}
@@ -197,6 +211,7 @@ const AddTarget = ({ adminInfo }) => {
                                     Image Uploaded Successfully
                                 </div> : null}
                                 <hr />
+
                                 <label htmlFor="formFile" className="form-label mt-2 d-block"><b>Select a Video File to Upload</b></label>
                                 <input className="form-control-sm mb-3" type="file" id="formFile" onChange={onVideoChange} accept=".mp4" />
                                 {videoMsg ? <p className="text-danger mt-2">{videoMsg}</p> : null}
@@ -206,6 +221,11 @@ const AddTarget = ({ adminInfo }) => {
                                     color="success"
                                     value={uploadPercentage}
                                 /> : null}
+
+                                {videoUploadProcess ? <div className="alert alert-primary mt-2" role="alert">
+                                    Video processing...Please wait!
+                                </div> : null}
+
                                 <hr />
 
                                 {imageUploading ? <button className="btn btn-secondary btn-lg btn-block">Uploading Image...</button> :

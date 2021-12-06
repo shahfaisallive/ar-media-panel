@@ -9,12 +9,14 @@ import { useNavigate } from 'react-router-dom'
 const Dashboard = ({ adminInfo }) => {
     const navigate = useNavigate()
     const [targets, setTargets] = useState([]);
+    const [targetsMeta, setTargetsMeta] = useState([]);
 
     const getTargets = () => {
         axios.get('/targets')
             .then(response => {
-                setTargets(response.data.results)
-                // console.log(response.data.results)
+                setTargets(response.data.result.results)
+                setTargetsMeta(response.data.targets)
+                // console.log(response)
             })
     }
 
@@ -22,6 +24,7 @@ const Dashboard = ({ adminInfo }) => {
         getTargets()
         // getAllTargetDetails()
         console.log(adminInfo)
+        // console.log(targetsMeta)
     }, [])
 
 
@@ -33,7 +36,7 @@ const Dashboard = ({ adminInfo }) => {
                     <div className="pb-5">
                         <h3 className="mt-4">All Active Targets</h3>
                         <div className="mt-3 bg-light targets-div ">
-                            {targets.length !== 0 ? <TargetList targets={targets} /> : null}
+                            {targets.length !== 0 && targetsMeta.length !== 0 ? <TargetList targets={targets} targetsMeta={targetsMeta} /> : null}
                         </div>
                     </div>
                 </div>

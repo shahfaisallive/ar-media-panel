@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Target = require('../models/Target')
 const vuforia = require('vuforia-api')
 const fs = require('fs')
 const util = require('util')
@@ -51,16 +52,16 @@ var vuforia_util = vuforia.util();
 
 
 // Add new Target
-router.post('/addtarget', async (req, res) => {
-    const { name, imagePath } = req.body
+router.post('/addtarget', async (req, res, next) => {
+    const { targetName, imagePath, imageName } = req.body
     const imgPath = imagePath.slice(23)
 
     var target = {
-        'name': name,
-        'width': 250,
+        'name': targetName,
+        'width': 500,
         'image': imgPath,
         'active_flag': true,
-        'application_metadata': vuforia_util.encodeBase64('metadataaaa')
+        'application_metadata': vuforia_util.encodeBase64(imageName),
     };
 
     client.addTarget(target, function (error, result) {
@@ -72,6 +73,22 @@ router.post('/addtarget', async (req, res) => {
             res.send(result)
         }
     });
+
+
+    const createdTarget = new Target({
+        imageName,
+        targetName
+    });
+
+    try {
+        await createdTarget.save();
+    } catch (err) {
+        const error = new Error('Creating destination failed, please try again.', 500);
+        return next(error);
+    }
+
+    console.log(createdTarget)
+
 })
 
 
@@ -105,26 +122,42 @@ router.post('/addVideo/:filename', upload.single('video'), async (req, res) => {
 
 // Get all targets 
 router.get('/', async (req, res) => {
+    let targets = await Target.find()
     client.listTargets(function (error, result) {
         if (error) {
             // console.error(result);
             res.send(result)
         } else {
             // console.log(result);
-            res.send(result)
+            res.send({result: result, targets: targets})
+            // res.send(result)
         }
     });
 })
 
 // Get one target
-router.get('/:id', async (req, res) => {
-    client.retrieveTarget(req.params.id, function (error, result) {
+router.get('/:id', async (req, res, next) => {
+    client.retrieveTarget(req.params.id, async function (error, result) {
         if (error) {
             console.error(result);
             res.send(result)
         } else {
-            console.log(result);
             res.send(result)
+            // console.log(result.target_record);
+            // let targetMeta
+            // try {
+            //     targetMeta = await Target.findOne({ targetName: result.target_record.name })
+
+            // } catch (err) {
+            //     console.log(err)
+            // }
+            
+            // if(targetMeta){
+            //     console.log({target: result.target_record, targetMeta: targetMeta})
+            // } else {
+            //     console.log({target: result.target_record, targetMeta: {}})
+            // }
+
         }
     });
 })

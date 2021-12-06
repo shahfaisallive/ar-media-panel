@@ -2,8 +2,6 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const JWT_SECRET = "LSN23sds923knksdn0aswpcx32zxe312"
-
 const AdminSchema = mongoose.Schema({
     username: {
         type: String,
@@ -37,7 +35,7 @@ AdminSchema.pre('save', async function (next) {
 })
 
 AdminSchema.methods.getToken = function () {
-    return jwt.sign({ id: this._id, }, JWT_SECRET, {
+    return jwt.sign({ id: this._id, }, process.env.JWT_SECRET, {
         expiresIn: '3h'
     });
 }
