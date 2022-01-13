@@ -12,8 +12,8 @@ const TargetList = ({ targets, targetsMeta }) => {
     useEffect(() => {
         axios.all(targets.map((target) => myaxios.get(`/targets/${target}`))).then(
             (data) => {
-                setTargetList(data.sort((y,x) => (x.data.target_record.tracking_rating - y.data.target_record.tracking_rating )));
-                // setTargetList(data)
+                // setTargetList(data.sort((y, x) => (x.data.target_record.tracking_rating - y.data.target_record.tracking_rating)));
+                setTargetList(data.reverse())
                 console.log(data)
             },
         );
@@ -71,9 +71,11 @@ const TargetList = ({ targets, targetsMeta }) => {
         )
     }
 
+  
+
     return (
         <div className="d-flex justify-content-center">
-            <table className="table table-hover text-center bg-white" style={{ borderRadius: 30 }}>
+            <table className="table table-hover text-center bg-white" style={{ borderRadius: 30 }} id="Table_ID">
                 <thead>
                     <tr>
                         <th className="pl-5" scope="col">Image Name</th>
@@ -102,6 +104,8 @@ const TargetList = ({ targets, targetsMeta }) => {
                         </div>}
                 </tbody>
             </table>
+
+       
         </div>
     )
 }

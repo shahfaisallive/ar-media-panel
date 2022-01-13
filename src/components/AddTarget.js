@@ -131,7 +131,7 @@ const AddTarget = ({ adminInfo }) => {
 
         // SUBMIT HANDLER TO ADD IMAGE
         const submitHandler = async (e) => {
-            if (image && videoFile) {
+            if (image && videoFile && imgName) {
                 const fileName = crypto.randomBytes(6).toString("hex")
                 e.preventDefault()
                 setImageUploading(true)
@@ -159,6 +159,13 @@ const AddTarget = ({ adminInfo }) => {
                                         label: 'Ok',
                                         onClick: () => {
                                             window.location.reload();
+                                            // setName("")
+                                            // setImage(null)
+                                            // setVideoFile(null)
+                                            // setProgressBarVisibility(false)
+                                            // setVideoUploadProcess(false)
+                                            // setImageProcessLoad(false)
+                                            // setImageUploadSuccess(false)
                                         }
                                     }
                                 ]
@@ -173,7 +180,7 @@ const AddTarget = ({ adminInfo }) => {
                         setImageUploading(false)
                     })
             } else {
-                alert('Something is missing in the form, select both files')
+                alert('Something is missing, Kindly check all the fields')
             }
         }
     
@@ -190,7 +197,7 @@ const AddTarget = ({ adminInfo }) => {
                             <div className="add-target-form col-md-6 mt-3 pb-2 mb-5">
                                 <label htmlFor="nameField" className="form-label mt-3 d-block"><b>File name</b></label>
                                 <input className="form-control text-left" type="text" id="nameField" onChange={onNameChange}
-                                style={{padding: '6px'}} value={imgName} />
+                                style={{padding: '6px'}} value={imgName} required />
 
                                 <label htmlFor="formFile" className="form-label mt-3 d-block"><b>Select an Image File to Upload</b></label>
                                 <input className="form-control-sm" type="file" id="formFile" onChange={onImageChange} accept=".jpeg, .jpg, .png" />
