@@ -41,7 +41,7 @@ const AddTarget = ({ adminInfo }) => {
             const newImage = await Jimp.read(reader.result)
             newImage.quality(70)
             newImage.resize(600, Jimp.AUTO)
-            newImage.greyscale()
+            // newImage.greyscale()
             console.log(newImage)
             newImage.getBase64Async(Jimp.MIME_JPEG)
                 .then(res => {

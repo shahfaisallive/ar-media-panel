@@ -59,7 +59,7 @@ router.post('/addtarget', async (req, res, next) => {
     console.log(targetName)
     var target = {
         'name': targetName,
-        'width': 500,
+        'width': 247,
         'image': imgPath,
         'active_flag': true,
         'application_metadata': vuforia_util.encodeBase64(imageName),
